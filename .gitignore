@@ -1,1 +1,4 @@
+__pycache__
+.idea
 .DS_STORE
+.pytest_cache

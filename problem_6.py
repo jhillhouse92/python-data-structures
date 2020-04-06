@@ -1,37 +1,30 @@
-# to do
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.next = None
-
-    def __repr__(self):
-        return str(self.value)
-
-
 class LinkedList:
-    def __init__(self):
+
+    class Node:
+        def __init__(self, value):
+            self.value = value
+            self.next = None
+
+        def __repr__(self):
+            return str(self.value)
+
+    def __init__(self, iterable = ()):
         self.head = None
 
-    def __str__(self):
-        cur_head = self.head
-        out_string = ""
-        while cur_head:
-            out_string += str(cur_head.value) + " -> "
-            cur_head = cur_head.next
-        return out_string
-
+        for item in iterable:
+            self.append(item)
 
     def append(self, value):
 
         if self.head is None:
-            self.head = Node(value)
+            self.head = self.Node(value)
             return
 
         node = self.head
         while node.next:
             node = node.next
 
-        node.next = Node(value)
+        node.next = self.Node(value)
 
     def size(self):
         size = 0
@@ -42,45 +35,130 @@ class LinkedList:
 
         return size
 
-def union(llist_1, llist_2):
-    # Your Solution Here
-    pass
+    def to_list(self):
+        result = []
+        node = self.head
 
-def intersection(llist_1, llist_2):
-    # Your Solution Here
-    pass
+        while node:
+            result.append(node.value)
+            node = node.next
+
+        return result
+
+    @staticmethod
+    def union(linked_list_1, linked_list_2):
+        union_set = set()
+        node = linked_list_1.head
+
+        while node:
+            union_set.add(node.value)
+            node = node.next
+
+        node = linked_list_2.head
+        while node:
+            union_set.add(node.value)
+            node = node.next
+
+        return LinkedList(union_set)
+
+    @staticmethod
+    def intersection(linked_list_1, linked_list_2):
+        # Your Solution Here
+        list1_set = set()
+        result_set = set()
+        node = linked_list_1.head
+
+        while node:
+            list1_set.add(node.value)
+            node = node.next
+
+        node = linked_list_2.head
+        while node:
+            if node.value in list1_set:
+                result_set.add(node.value)
+            node = node.next
+
+        return LinkedList(result_set)
+
+    def __str__(self):
+        cur_head = self.head
+        out_string = ""
+        while cur_head:
+            out_string += str(cur_head.value) + " -> "
+            cur_head = cur_head.next
+        return out_string
 
 
-# Test case 1
+def setup_linked_list(arr1, arr2):
+    linked_list_1 = LinkedList()
+    linked_list_2 = LinkedList()
 
-linked_list_1 = LinkedList()
-linked_list_2 = LinkedList()
+    for item in arr1:
+        linked_list_1.append(item)
 
-element_1 = [3,2,4,35,6,65,6,4,3,21]
-element_2 = [6,32,4,9,6,1,11,21,1]
+    for item in arr2:
+        linked_list_2.append(item)
 
-for i in element_1:
-    linked_list_1.append(i)
+    return linked_list_1, linked_list_2
 
-for i in element_2:
-    linked_list_2.append(i)
+def test_union_without_duplicates():
+    arr1 = [1, 2, 3, 4, 5]
+    arr2 = [6, 7, 8, 9, 10]
 
-print (union(linked_list_1,linked_list_2))
-print (intersection(linked_list_1,linked_list_2))
+    linked_list_1, linked_list_2 = setup_linked_list(arr1, arr2)
+    result = LinkedList.union(linked_list_1, linked_list_2)
 
-# Test case 2
+    assert sorted(result.to_list()) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-linked_list_3 = LinkedList()
-linked_list_4 = LinkedList()
+    arr1 = [1, 2, 3]
+    arr2 = []
 
-element_1 = [3,2,4,35,6,65,6,4,3,23]
-element_2 = [1,7,8,9,11,21,1]
+    linked_list_1, linked_list_2 = setup_linked_list(arr1, arr2)
+    result = LinkedList.union(linked_list_1, linked_list_2)
 
-for i in element_1:
-    linked_list_3.append(i)
+    assert sorted(result.to_list()) == [1, 2, 3]
 
-for i in element_2:
-    linked_list_4.append(i)
+def test_union_with_duplicates():
+    arr1 = [3, 2, 4, 35, 6, 65, 6, 4, 3, 21]
+    arr2 = [6, 32, 4, 9, 6, 1, 11, 21, 1]
 
-print (union(linked_list_3,linked_list_4))
-print (intersection(linked_list_3,linked_list_4))
+    linked_list_1, linked_list_2 = setup_linked_list(arr1, arr2)
+    result = LinkedList.union(linked_list_1, linked_list_2)
+
+    assert sorted(result.to_list()) == [1, 2, 3, 4, 6, 9, 11, 21, 32, 35, 65]
+
+def test_intersection_without_duplicates():
+    arr1 = [1, 2, 3, 4, 5]
+    arr2 = [2, 8, 9, 5, 10]
+
+    linked_list_1, linked_list_2 = setup_linked_list(arr1, arr2)
+    result = LinkedList.intersection(linked_list_1, linked_list_2)
+
+    assert sorted(result.to_list()) == [2, 5]
+
+
+def test_intersection_with_no_intersection():
+    arr1 = [3, 2, 4, 35, 6, 65, 6, 4, 3, 23]
+    arr2 = [1, 7, 8, 9, 11, 21, 1]
+
+    linked_list_1, linked_list_2 = setup_linked_list(arr1, arr2)
+    result = LinkedList.intersection(linked_list_1, linked_list_2)
+
+    assert result.to_list() == []
+
+    arr1 = [1, 2, 3]
+    arr2 = []
+
+    linked_list_1, linked_list_2 = setup_linked_list(arr1, arr2)
+    result = LinkedList.intersection(linked_list_1, linked_list_2)
+
+    assert result.to_list() == []
+
+def test_intersection_with_duplicates():
+    arr1 = [3, 2, 4, 35, 6, 65, 6, 4, 3, 21]
+    arr2 = [6, 32, 4, 9, 6, 1, 11, 21, 1]
+
+    linked_list_1, linked_list_2 = setup_linked_list(arr1, arr2)
+    result = LinkedList.intersection(linked_list_1, linked_list_2)
+
+    assert sorted(result.to_list()) == [4, 6, 21]

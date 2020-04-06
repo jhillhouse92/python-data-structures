@@ -32,7 +32,7 @@ class Huffman:
         if len(priority_q) == 1:
             self.root = self.Node(data, 1)
             self.root.left = priority_q[0]
-            self.encoded_data = '0'
+            self.encoded_data = '0' * priority_q[0].freq # repeat for each frequency of the single node
             return self.encoded_data
 
         while len(priority_q) > 1:  # O(n)
@@ -76,36 +76,50 @@ class Huffman:
         return result
 
 
-# To do: convert these to pytest cases
-if __name__ == "__main__":
-    codes = {}
+def test_encode():
+    a_great_sentence = 'The bird is the word'
 
-    a_great_sentence = "The bird is the word"
-
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    print("The content of the data is: {}\n".format(a_great_sentence))
+    assert sys.getsizeof(a_great_sentence) == 69
 
     huffman = Huffman(a_great_sentence)
 
-    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(huffman.encoded_data, base=2))))
-    print("The content of the encoded data is: {}\n".format(huffman.encoded_data))
+    assert sys.getsizeof(int(huffman.encoded_data, base=2)) == 36
+    assert huffman.encoded_data == '1000111111100100001101110000101110110110100011111111001101010011100001'
 
-    decoded_data = huffman.decode()
+def test_decode():
+    a_great_sentence = 'The bird is the word'
+    huffman = Huffman(a_great_sentence)
+    original_str = huffman.decode()
 
-    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    print("The content of the encoded data is: {}\n".format(decoded_data))
+    assert sys.getsizeof(original_str) == 69
+    assert original_str == 'The bird is the word'
 
-    a_great_sentence = "A"
+def test_encode_decode_with_one_char():
+    a_great_sentence = 'A'
 
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    print("The content of the data is: {}\n".format(a_great_sentence))
+    assert sys.getsizeof(a_great_sentence) == 50
 
     huffman = Huffman(a_great_sentence)
 
-    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(huffman.encoded_data, base=2))))
-    print("The content of the encoded data is: {}\n".format(huffman.encoded_data))
+    assert sys.getsizeof(int(huffman.encoded_data, base=2)) == 24
+    assert huffman.encoded_data == '0'
 
-    decoded_data = huffman.decode()
+    original_str = huffman.decode()
 
-    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    print("The content of the encoded data is: {}\n".format(decoded_data))
+    assert sys.getsizeof(original_str) == 50
+    assert original_str == 'A'
+
+def test_encode_decode_with_repeating_char():
+    a_great_sentence = 'aaaaaa'
+
+    assert sys.getsizeof(a_great_sentence) == 55
+
+    huffman = Huffman(a_great_sentence)
+
+    assert sys.getsizeof(int(huffman.encoded_data, base=2)) == 24
+    assert huffman.encoded_data == '000000'
+
+    original_str = huffman.decode()
+
+    assert sys.getsizeof(original_str) == 55
+    assert original_str == 'aaaaaa'

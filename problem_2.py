@@ -45,18 +45,12 @@ def find_files(suffix, start_dir):
 
 def test_find_files():
     result = find_files('.c', './testdir')
-    assert result == ['./testdir/subdir1/a.c', './testdir/subdir3/subsubdir1/b.c',
-                      './testdir/subdir5/a.c', './testdir/t1.c']
-
-    print(result)
-    # Expected Output:
-    # ['./testdir/subdir1/a.c', './testdir/subdir3/subsubdir1/b.c', './testdir/subdir5/a.c', './testdir/t1.c']
-
+    assert result.sort() == ['./testdir/subdir1/a.c', './testdir/subdir3/subsubdir1/b.c',
+                             './testdir/subdir5/a.c', './testdir/t1.c'].sort()
 
 def test_find_files_with_bad_start_name():
     with pytest.raises(FileNotFoundError):
         find_files('.c', './some_bad_dir_name')
-
 
 def test_find_files_with_bad_suffix():
     with pytest.raises(InvalidSuffixError):
